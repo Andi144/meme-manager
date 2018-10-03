@@ -1,7 +1,8 @@
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.awt.Image
 import java.awt.image.BufferedImage
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
 
 object Util {
 	
@@ -13,9 +14,9 @@ object Util {
 			Meme(parts[0], parts[1].split(tagSeparator).toSet(), parts[2])
 		}
 	
-	fun memesToCSV(memes: Collection<Meme>, file: String) {
-		// TODO: not efficient to always write the entire file
-		Files.write(Paths.get(file), memes.map { "${it.name},${it.tags.joinToString(tagSeparator)},${it.imageFile}" })
+	fun addMemeToCSV(meme: Meme, memeFile: String) {
+		val memeString = "${meme.name},${meme.tags.joinToString(tagSeparator)},${meme.imageFile}"
+		Files.write(Paths.get(memeFile), listOf(memeString), StandardOpenOption.CREATE, StandardOpenOption.APPEND)
 	}
 	
 	fun convertToBufferedImage(img: Image): BufferedImage {

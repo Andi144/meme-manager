@@ -110,8 +110,9 @@ class MemeManager {
 							val image = Util.convertToBufferedImage(imageFromClipboard)
 							val imageFile = "$memeDir/${UUID.randomUUID()}.png"
 							ImageIO.write(image, "png", File(imageFile))
-							allMemes.add(Meme(it.memeName, it.memeTags, imageFile))
-							Util.memesToCSV(allMemes, memeFile)
+							val meme = Meme(it.memeName, it.memeTags, imageFile)
+							allMemes.add(meme)
+							Util.addMemeToCSV(meme, memeFile)
 							setMemes(allMemes)
 							dialog.dispose()
 						}
