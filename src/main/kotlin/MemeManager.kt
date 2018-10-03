@@ -8,6 +8,8 @@ import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
 import java.awt.event.*
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
 import javax.imageio.ImageIO
 
@@ -18,10 +20,15 @@ class MemeManager {
 	private val panelMemes = JPanel()
 	
 	private val allMemes = mutableSetOf<Meme>()
+	// the directory where all memes are stored; always in the directory where the MemeManager was started
+	private val memeDir = "memes"
 	// always in the directory where the MemeManager was started
 	private val memeFile = "memes.csv"
 	
 	init {
+		// create the meme directory if it does not exist
+		Files.createDirectories(Paths.get(memeDir))
+		
 		val contentPane = JPanel(BorderLayout())
 		contentPane.border = EmptyBorder(5, 5, 5, 5)
 		
@@ -101,7 +108,7 @@ class MemeManager {
 							JOptionPane.showMessageDialog(frame, "Name already exists", "Error", JOptionPane.ERROR_MESSAGE)
 						} else {
 							val image = Util.convertToBufferedImage(imageFromClipboard)
-							val imageFile = "memes/${UUID.randomUUID()}.png"
+							val imageFile = "$memeDir/${UUID.randomUUID()}.png"
 							ImageIO.write(image, "png", File(imageFile))
 							allMemes.add(Meme(it.memeName, it.memeTags, imageFile))
 							Util.memesToCSV(allMemes, memeFile)
