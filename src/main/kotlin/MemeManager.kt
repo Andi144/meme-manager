@@ -124,6 +124,7 @@ class MemeManager {
 			}
 		}
 		menuItemAdd.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK)
+		menuItemAdd.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK)
 		menuFile.add(menuItemAdd)
 		
 		val menuItemExit = JMenuItem("Exit")
