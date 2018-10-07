@@ -1,17 +1,20 @@
 import java.awt.BorderLayout
-import javax.swing.*
-import javax.swing.border.EmptyBorder
-import javax.swing.event.DocumentEvent
-import javax.swing.event.DocumentListener
 import java.awt.Image
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
-import java.awt.event.*
+import java.awt.event.InputEvent
+import java.awt.event.KeyEvent
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
 import javax.imageio.ImageIO
+import javax.swing.*
+import javax.swing.border.EmptyBorder
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 
 class MemeManager {
 	
@@ -19,6 +22,7 @@ class MemeManager {
 	private val textFieldSearch = JTextField()
 	private val panelMemes = JPanel(ModifiedFlowLayout())
 	
+	private val memeToPanel = mutableMapOf<Meme, MemePanel>()
 	private val allMemes = mutableSetOf<Meme>()
 	// the directory where all memes are stored; always in the directory where the MemeManager was started
 	private val memeDir = "memes"
@@ -54,7 +58,7 @@ class MemeManager {
 		panelNorth.add(textFieldSearch, BorderLayout.CENTER)
 		
 		addMenuBar()
-		loadAndSetMemes()
+		loadAndSetStoredMemes()
 		
 		// listeners
 		textFieldSearch.document.addDocumentListener(object : DocumentListener {
@@ -72,13 +76,10 @@ class MemeManager {
 			
 			fun filter() {
 				val text = textFieldSearch.text
-				// val tags = text.split(",").filter { it.isNotEmpty() }
-				val newMemes = allMemes.filterTo(mutableSetOf()) {
-					//it.tags.containsAll(tags)
+				memeToPanel.forEach { (meme, memePanel) ->
 					// TODO: could just simply store one text string for tags instead of sets/lists
-					it.tags.joinToString(separator = " ").contains(text, ignoreCase = true)
+					memePanel.isVisible = (meme.tags.joinToString(separator = " ").contains(text, ignoreCase = true))
 				}
-				setMemes(newMemes)
 			}
 		})
 	}
@@ -113,9 +114,12 @@ class MemeManager {
 							val imageFile = "$memeDir/${UUID.randomUUID()}.png"
 							ImageIO.write(image, "png", File(imageFile))
 							val meme = Meme(it.memeName, it.memeTags, imageFile)
-							allMemes.add(meme)
+							val memePanel = MemePanel(meme)
+							memeToPanel[meme] = memePanel
+							panelMemes.add(memePanel)
+							panelMemes.revalidate()
+							panelMemes.repaint()
 							Util.addMemeToCSV(meme, memeFile)
-							setMemes(allMemes)
 							dialog.dispose()
 						}
 					}
@@ -135,29 +139,15 @@ class MemeManager {
 		menuFile.add(menuItemExit)
 	}
 	
-	private fun loadAndSetMemes() {
+	private fun loadAndSetStoredMemes() {
 		val newMemes: List<Meme> = Util.memesFromCSV(memeFile)
-		allMemes.addAll(newMemes)
-		setMemes(newMemes)
-	}
-	
-	private fun setMemes(newMemes: Collection<Meme>) {
-		panelMemes.removeAll()
 		newMemes.forEach {
 			val memePanel = MemePanel(it)
-			memePanel.addMouseListener(object : MouseAdapter() {
-				override fun mouseClicked(e: MouseEvent?) {
-					setClipboard(memePanel.image)
-				}
-			})
+			memeToPanel[it] = memePanel
 			panelMemes.add(memePanel)
 		}
 		panelMemes.revalidate()
 		panelMemes.repaint()
-	}
-	
-	fun setClipboard(image: Image) {
-		Toolkit.getDefaultToolkit().systemClipboard.setContents(ImageSelection(image), null)
 	}
 	
 	fun activate() {

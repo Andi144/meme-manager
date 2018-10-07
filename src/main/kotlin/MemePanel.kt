@@ -1,5 +1,7 @@
 import java.awt.BorderLayout
 import java.awt.Color
+import java.awt.Image
+import java.awt.Toolkit
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.BorderFactory
@@ -9,8 +11,6 @@ import javax.swing.JPanel
 class MemePanel(meme: Meme) : JPanel() {
 	
 	private val imagePanel = ImagePanel(meme.imageFile)
-	val image
-		get() = imagePanel.image
 	
 	init {
 		layout = BorderLayout()
@@ -26,7 +26,15 @@ class MemePanel(meme: Meme) : JPanel() {
 			override fun mouseExited(e: MouseEvent?) {
 				border = BorderFactory.createLineBorder(Color.BLACK, 1)
 			}
+			
+			override fun mouseClicked(e: MouseEvent?) {
+				setClipboard(imagePanel.image)
+			}
 		})
+	}
+	
+	private fun setClipboard(image: Image) {
+		Toolkit.getDefaultToolkit().systemClipboard.setContents(ImageSelection(image), null)
 	}
 	
 }
