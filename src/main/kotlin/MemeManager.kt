@@ -17,7 +17,7 @@ class MemeManager {
 	
 	private val frame = JFrame("Meme Manager")
 	private val textFieldSearch = JTextField()
-	private val panelMemes = JPanel()
+	private val panelMemes = JPanel(ModifiedFlowLayout())
 	
 	private val allMemes = mutableSetOf<Meme>()
 	// the directory where all memes are stored; always in the directory where the MemeManager was started
@@ -43,7 +43,9 @@ class MemeManager {
 		})
 		
 		// center
-		contentPane.add(panelMemes)
+		contentPane.add(JScrollPane(panelMemes).also {
+			it.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+		})
 		
 		// north
 		val panelNorth = JPanel(BorderLayout(5, 0))
