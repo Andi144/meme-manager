@@ -49,6 +49,7 @@ class MemeManager {
 		// center
 		contentPane.add(JScrollPane(panelMemes).also {
 			it.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+			it.verticalScrollBar.unitIncrement = 16;
 		})
 		
 		// north
@@ -156,7 +157,7 @@ class MemeManager {
 	
 }
 
-fun main(args: Array<String>) {
+fun main() {
 	try {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
 	} catch (e: Exception) {
