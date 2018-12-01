@@ -49,7 +49,7 @@ class MemeManager {
 		// center
 		contentPane.add(JScrollPane(panelMemes).also {
 			it.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
-			it.verticalScrollBar.unitIncrement = 16;
+			it.verticalScrollBar.unitIncrement = 16
 		})
 		
 		// north
@@ -93,7 +93,7 @@ class MemeManager {
 		menuBar.add(menuFile)
 		
 		val menuItemAdd = JMenuItem("Add")
-		menuItemAdd.addActionListener { _ ->
+		menuItemAdd.addActionListener {
 			val imageFromClipboard: Image? = try {
 				Toolkit.getDefaultToolkit().systemClipboard.getData(DataFlavor.imageFlavor) as Image
 			} catch (e: Exception) {
@@ -105,16 +105,16 @@ class MemeManager {
 				val dialog = JDialog()
 				// TODO
 //				dialog.isUndecorated = true
-				dialog.contentPane.add(MemeEditPanel(imageFromClipboard).also {
-					it.buttonCancel.addActionListener { _ -> dialog.dispose() }
-					it.buttonAdd.addActionListener { _ ->
-						if (allMemes.any { meme -> meme.name == it.memeName }) {
+				dialog.contentPane.add(MemeEditPanel(imageFromClipboard).also { memeEditPanel ->
+					memeEditPanel.buttonCancel.addActionListener { dialog.dispose() }
+					memeEditPanel.buttonAdd.addActionListener {
+						if (allMemes.any { meme -> meme.name == memeEditPanel.memeName }) {
 							JOptionPane.showMessageDialog(frame, "Name already exists", "Error", JOptionPane.ERROR_MESSAGE)
 						} else {
 							val image = Util.convertToBufferedImage(imageFromClipboard)
 							val imageFile = "$memeDir/${UUID.randomUUID()}.png"
 							ImageIO.write(image, "png", File(imageFile))
-							val meme = Meme(it.memeName, it.memeTags, imageFile)
+							val meme = Meme(memeEditPanel.memeName, memeEditPanel.memeTags, imageFile)
 							val memePanel = MemePanel(meme)
 							memeToPanel[meme] = memePanel
 							panelMemes.add(memePanel)
